@@ -1,14 +1,16 @@
-import http.client
+import requests
 
-conn = http.client.HTTPConnection("api.royaleapi.com")
+def make_request(url):
+    url = url
 
-headers = {
-    'auth': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUwNCwiaWRlbiI6IjI1OTQ0NTg1MTQzMTIzOTY5MSIsIm1kIjp7fSwidHMiOjE1NTQ5MjY4NDE2ODJ9.xSjEv4wdLMNSujYQIqw1j7jFC1F61fj0PnDinFT_5o4",
-    }
+    headers = {
+        'auth': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjUwNCwiaWRlbiI6IjI1OTQ0NTg1MTQzMTIzOTY5MSIsIm1kIjp7fSwidHMiOjE1NTQ5MjY4NDE2ODJ9.xSjEv4wdLMNSujYQIqw1j7jFC1F61fj0PnDinFT_5o4"
+        }
 
-conn.request("GET", "/top/players/", headers=headers)
+    response = requests.request("GET", url, headers=headers)
 
-res = conn.getresponse()
-data = res.read()
+    data = response.json()
+    return data
 
-print(data.decode("utf-8"))
+data = make_request("https://api.royaleapi.com/player/98Y2CVV8/battles")
+data
