@@ -12,5 +12,8 @@ def make_request(url):
     data = response.json()
     return data
 
+# Notable player IDS:
+# Me: 98Y2CVV8
+# LucasXGamer CR (Good 2.6 Hog player): 9G28ULYR 
 data = make_request("https://api.royaleapi.com/player/98Y2CVV8/battles")
 data
