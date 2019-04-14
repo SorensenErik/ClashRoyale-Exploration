@@ -1,2 +1,3 @@
 /datadumps
 /__pycache__
+*.pyc
