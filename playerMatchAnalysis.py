@@ -21,20 +21,28 @@ for filename in os.listdir("datadumps/playerData/Jinakaks_8020JC98P"):
     with open('datadumps/playerData/Jinakaks_8020JC98P/{:}'.format(filename), 'r') as f:
         Jin_data = json.load(f) # This is all of the data in the folder
 
-def ladder_summary(data):
-    ladder_games = []
+def filter_games(data,game_type):
+    # games = []
     for match in data:
-        if match['mode']['name'] == 'Ladder':
-            ladder_games.append(match)
+        if match['mode']['name'] == game_type:
+            # games.append(match)
+            yield match
+    # return games
 
-    wins = []
-    for match in ladder_games:
+def extract_wins(data):
+    # wins = []
+    for match in data:
         win = match['winner']
-        if win == -1: # Correct for match['winner'] saying either 2 or 3 instead of 1 for wins
-            wins.append(win)
+        if win == -1:
+            yield win
         else:
-            wins.append(1)
-    print(wins)
+            yield 1
+    # return wins
+
+def ladder_summary(data):
+    ladder_games = list(filter_games(data,'Ladder'))
+
+    wins = list(extract_wins(data))
     win_loss_ratio = wins.count(1)/len(wins)
 
     trophy_change = []
@@ -43,11 +51,28 @@ def ladder_summary(data):
     avg_trophy_movement = np.mean(np.abs(trophy_change))
     avg_trophy_gain = np.mean(trophy_change)
 
-    print("For the last {:} ladder games:".format(len(ladder_games)))
+    print("For the last {:} ladder games:".format(len(list(ladder_games))))
     print("You have a {:.4f}% win rate.".format(win_loss_ratio))
     print("You have gained an average of {:.4f} trophies per game.".format(avg_trophy_gain))
-    print(wins)
-    print(trophy_change)
 
 ladder_summary(Cryp_data)
 ladder_summary(Jin_data)
+
+ladder = list(filter_games(Cryp_data,'Ladder'))
+ladder[0]
+
+# Strategy for organizing the data I want
+from collections import defaultdict
+matches = []
+for match in ladder:
+    d = defaultdict(list)
+    for card in match['team'][0]['deck']:
+        d['team_cards'].append(card['name'])
+
+    for card in match['opponent'][0]['deck']:
+        d['opponent_cards'].append(card['name'])
+
+    d['win'] = match['winner']
+
+    matches.append(d)
+matches
