@@ -15,7 +15,7 @@ def save_player_data(data,dirname):
         game_mode = match['mode']['name']
         utcTime = match['utcTime']
         with open('datadumps/playerData/{:}/{:}-{:}.json'.format(dirname,utcTime,game_mode),'w') as outfile:
-            json.dump(data, outfile)
+            json.dump(match, outfile)
 
 save_player_data(data_98Y2CVV8,"CrypticSl0th_98Y2CVV8")
 save_player_data(data_8020JC98P,"Jinakaks_8020JC98P")
