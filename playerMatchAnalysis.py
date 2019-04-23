@@ -67,16 +67,36 @@ ladder[0]
 
 # Strategy for organizing the data I want
 from collections import defaultdict
-matches = []
-for match in ladder:
+
+def clean_data(data):
+    matches = []
+    for match in data:
+        d = defaultdict(list)
+        for card in match['team'][0]['deck']:
+            d['team_cards'].append(card['name'])
+
+        for card in match['opponent'][0]['deck']:
+            d['opponent_cards'].append(card['name'])
+
+        d['win'] = match['winner']
+
+        matches.append(d)
+    return matches
+
+def card_winloss(clean_matches,card_search):
     d = defaultdict(list)
-    for card in match['team'][0]['deck']:
-        d['team_cards'].append(card['name'])
+    for match in clean_matches:
+        if match['win'] > 0:
+            win = 1
+        if match['win'] < 0:
+            win = -1
+        if match['win'] == 0:
+            win = 0
+        for card in match['opponent_cards']:
+            d[card].append(win)
+    card_winrate = np.mean([0 if i < 0 else i for i in d[card_search]])
+    return card_winrate
 
-    for card in match['opponent'][0]['deck']:
-        d['opponent_cards'].append(card['name'])
-
-    d['win'] = match['winner']
-
-    matches.append(d)
-matches
+ladder_clean = clean_data(ladder)
+card_winloss(ladder_clean,'P.E.K.K.A')
+card_winloss(ladder_clean,'Fireball')
