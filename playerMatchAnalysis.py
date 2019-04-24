@@ -13,15 +13,16 @@ os.chdir("C:/Github/ClashRoyale-Exploration") # For Atom Hydrogen
 # ladder_games = glob.glob("datadumps/playerData/*Ladder.json")
 # ladder_games = [x.replace("\\","/") for x in ladder_games]
 # ladder_games
-Cryp_data = []
-for filename in os.listdir("datadumps/playerData/CrypticSl0th_98Y2CVV8"):
-    with open('datadumps/playerData/CrypticSl0th_98Y2CVV8/{:}'.format(filename), 'r') as f:
-        Cryp_data.append(json.load(f)) # This is all of the data in the folder
 
-Jin_data = []
-for filename in os.listdir("datadumps/playerData/Jinakaks_8020JC98P"):
-    with open('datadumps/playerData/Jinakaks_8020JC98P/{:}'.format(filename), 'r') as f:
-        Jin_data.append(json.load(f)) # This is all of the data in the folder
+def get_match_data(path):
+    data = []
+    for filename in os.listdir(path):
+        with open('{:}/{:}'.format(path,filename), 'r') as f:
+            data.append(json.load(f)) # This is all of the data in the folder
+    return data
+
+Cryp_data = get_match_data("datadumps/playerData/CrypticSl0th_98Y2CVV8")
+Jin_data = get_match_data("datadumps/playerData/Jinakaks_8020JC98P")
 
 def filter_games(data,game_type):
     # games = []
@@ -41,7 +42,6 @@ def extract_wins(data):
             yield 1
     # return wins
 
-Cryp_data[0]
 def ladder_summary(data):
     ladder_games = list(filter_games(data,'Ladder'))
 
