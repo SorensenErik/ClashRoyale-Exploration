@@ -3,7 +3,7 @@ import os
 #os.chdir("C:/GitHub/ClashRoyale-Exploration") # For Hydrogen Atom
 from apiaccess import make_request
 
-path = 'D:/DataSets/ClashRoyale/playerData/'
+path = 'F:/DataSets/ClashRoyale/playerData/'
 data_98Y2CVV8 = make_request("https://api.royaleapi.com/player/98Y2CVV8/battles")
 data_8020JC98P = make_request("https://api.royaleapi.com/player/8020JC98P/battles")
 
