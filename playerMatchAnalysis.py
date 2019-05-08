@@ -21,8 +21,8 @@ def get_match_data(path):
             data.append(json.load(f)) # This is all of the data in the folder
     return data
 
-Cryp_data = get_match_data("datadumps/playerData/CrypticSl0th_98Y2CVV8")
-Jin_data = get_match_data("datadumps/playerData/Jinakaks_8020JC98P")
+Cryp_data = get_match_data("E:/DataSets/ClashRoyale/playerData/CrypticSl0th_98Y2CVV8")
+Jin_data = get_match_data("E:/DataSets/ClashRoyale/playerData/Jinakaks_8020JC98P")
 
 def filter_games(data,game_type):
     # games = []
@@ -63,7 +63,6 @@ ladder_summary(Cryp_data)
 ladder_summary(Jin_data)
 
 ladder = list(filter_games(Cryp_data,'Ladder'))
-ladder[0]
 
 # Strategy for organizing the data I want
 from collections import defaultdict
@@ -97,6 +96,29 @@ def card_winloss(clean_matches,card_search):
     card_winrate = np.mean([0 if i < 0 else i for i in d[card_search]])
     return card_winrate
 
-ladder_clean = clean_data(ladder)
-card_winloss(ladder_clean,'P.E.K.K.A')
-card_winloss(ladder_clean,'Fireball')
+ladder_clean = clean_data(list(filter_games(Jin_data,'Ladder')))
+card_winloss(ladder_clean,'Bowler')
+
+def find_played_decks(data):
+    l = []
+    for game in data:
+        deck = []
+        for card in game['team'][0]['deck']:
+            deck.append(card['name'])
+        tf = []
+        for d in l:
+            tf.append(set(deck) == set(d))
+        if True not in tf:
+            l.append(deck)
+    return l
+
+played_decks = find_played_decks(filter_games(Cryp_data,'Ladder'))
+played_decks
+
+['1','2','3'] == ['1','3','2']
+
+
+played_decks
+
+
+ladder[0]['team'][0]['deck']
