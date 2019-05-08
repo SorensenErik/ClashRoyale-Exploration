@@ -77,20 +77,24 @@ def clean_data(data):
         for card in match['opponent'][0]['deck']:
             d['opponent_cards'].append(card['name'])
 
-        d['win'] = match['winner']
+        d['winner'] = match['winner']
 
         matches.append(d)
     return matches
 
+def clean_wins(match):
+    if match['winner'] > 0:
+        win = 1
+    if match['winner'] < 0:
+        win = -1
+    if match['winner'] == 0:
+        win = 0
+    return win
+
 def card_winloss(clean_matches,card_search):
     d = defaultdict(list)
     for match in clean_matches:
-        if match['win'] > 0:
-            win = 1
-        if match['win'] < 0:
-            win = -1
-        if match['win'] == 0:
-            win = 0
+        win = clean_wins(match)
         for card in match['opponent_cards']:
             d[card].append(win)
     card_winrate = np.mean([0 if i < 0 else i for i in d[card_search]])
@@ -99,12 +103,16 @@ def card_winloss(clean_matches,card_search):
 ladder_clean = clean_data(list(filter_games(Jin_data,'Ladder')))
 card_winloss(ladder_clean,'Bowler')
 
+def extract_deck(deck_path):
+    deck = []
+    for card in deck_path:
+        deck.append(card['name'])
+    return deck
+
 def find_played_decks(data):
     l = []
-    for game in data:
-        deck = []
-        for card in game['team'][0]['deck']:
-            deck.append(card['name'])
+    for match in data:
+        deck = extract_deck(match['team'][0]['deck'])
         tf = []
         for d in l:
             tf.append(set(deck) == set(d))
@@ -112,13 +120,32 @@ def find_played_decks(data):
             l.append(deck)
     return l
 
-played_decks = find_played_decks(filter_games(Cryp_data,'Ladder'))
-played_decks
+def deck_winrates(data):
+    # FIXME: sets are not hashable for default dicts
+    d = defaultdict(list)
+    decks = find_played_decks(data)
+    for match in data:
+        for user_deck in decks:
+            deck = extract_deck(match['team'][0]['deck'])
+            if set(deck) == set(user_deck):
+                d[set(user_deck)].append(clean_wins(match))
+    return d
 
-['1','2','3'] == ['1','3','2']
+def deck_winrate(data,user_deck):
+    wl = []
+    for match in data:
+        deck = extract_deck(match['team'][0]['deck'])
+        if set(deck) == set(user_deck):
+            wl.append(clean_wins(match))
+    w_rate = np.mean([0 if i < 0 else i for i in wl]) # Make Losses 0 instead of -1
+    return w_rate
+
+Hog_2_9 = ['Knight','Tesla','Archers','Hog Rider','Goblins','Zap','Fireball','Ice Spirit']
+Hog_2_6 = ['Ice Golem','Cannon','Musketeer','Hog Rider','Skeletons','The Log','Fireball','Ice Spirit']
+deck_winrate(Cryp_data,Hog_2_6)
+deck_winrate(Cryp_data,Hog_2_9)
+
+find_played_decks(filter_games(Cryp_data,'Ladder'))
 
 
-played_decks
-
-
-ladder[0]['team'][0]['deck']
+ladder[0]
